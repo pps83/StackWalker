@@ -104,7 +104,7 @@ static BOOL PreventSetUnhandledExceptionFilter()
   // 33 C0                xor         eax,eax
   // C3                   ret
   unsigned char szExecute[] = {0x33, 0xC0, 0xC3};
-#elif _M_ARM64  
+#elif _M_ARM64
 	unsigned char szExecute[] = {
 		0x00, 0x00, 0x80, 0xD2, // mov x0, #0
 		0xC0, 0x03, 0x5F, 0xD6 // ret
