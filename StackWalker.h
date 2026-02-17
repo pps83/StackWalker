@@ -37,8 +37,6 @@
  *   SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  * **********************************************************************/
-// #pragma once is supported starting with _MSC_VER 1000,
-// so we need not to check the version (because we only support _MSC_VER >= 1100)!
 #pragma once
 
 #include <windows.h>
@@ -57,14 +55,14 @@ class StackWalkerInternal; // forward
 class StackWalker
 {
 public:
-  typedef enum ExceptType
+  enum ExceptType
   {
     NonExcept   = 0,     // RtlCaptureContext
     AfterExcept = 1,
     AfterCatch  = 2,     // get_current_exception_context
-  } ExceptType;
+  };
 
-  typedef enum StackWalkOptions
+  enum StackWalkOptions
   {
     // No addition info will be retrieved
     // (only the address is available)
@@ -99,7 +97,7 @@ public:
 
     // Contains all options (default)
     OptionsAll = 0x7F
-  } StackWalkOptions;
+  };
 
   StackWalker(ExceptType extype, int options = OptionsAll, PEXCEPTION_POINTERS exp = NULL);
 
@@ -109,13 +107,10 @@ public:
               HANDLE hProcess = GetCurrentProcess());
 
   StackWalker(DWORD dwProcessId, HANDLE hProcess);
-
   virtual ~StackWalker();
 
   bool SetSymPath(LPCSTR szSymPath);
-
   bool SetTargetProcess(DWORD dwProcessId, HANDLE hProcess);
-
   PCONTEXT GetCurrentExceptionContext();
 
 private:
@@ -155,7 +150,7 @@ protected:
 
 protected:
   // Entry for each Callstack-Entry
-  typedef struct CallstackEntry
+  struct CallstackEntry
   {
     DWORD64 offset; // if 0, we have no valid entry
     CHAR    name[STACKWALK_MAX_NAMELEN];
@@ -170,17 +165,17 @@ protected:
     CHAR    moduleName[STACKWALK_MAX_NAMELEN];
     DWORD64 baseOfImage;
     CHAR    loadedImageName[STACKWALK_MAX_NAMELEN];
-  } CallstackEntry;
+  };
 
   void ClearCSEntry(CallstackEntry& csEntry);
   void ClearCSEntryInline(CallstackEntry& csEntry);
 
-  typedef enum CallstackEntryType
+  enum CallstackEntryType
   {
     firstEntry,
     nextEntry,
     lastEntry
-  } CallstackEntryType;
+  };
 
   virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName);
   virtual void OnLoadModule(LPCSTR    img,
@@ -211,7 +206,8 @@ protected:
                                       LPDWORD lpNumberOfBytesRead);
 
   friend StackWalkerInternal;
-}; // class StackWalker
+};
+
 
 // The "ugly" assembler-implementation is needed for systems before XP
 // If you have a new PSDK and you only compile for XP and later, then you can use
