@@ -230,14 +230,6 @@ typedef DWORD64(__stdcall* PTRANSLATE_ADDRESS_ROUTINE64)(HANDLE      hProcess,
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 #endif
 
-// secure-CRT_functions are only available starting with VC8
-#if _MSC_VER < 1400
-#define strcpy_s(dst, len, src) strcpy(dst, src)
-#define strncpy_s(dst, len, src, maxLen) strncpy(dst, len, src)
-#define strcat_s(dst, len, src) strcat(dst, src)
-#define _snprintf_s _snprintf
-#define _tcscat_s _tcscat
-#endif
 
 static void MyStrCpy(char* szDest, size_t nMaxDestSize, const char* szSrc)
 {
@@ -424,7 +416,7 @@ public:
       if (this->pSGSP(m_hProcess, buf, StackWalker::STACKWALK_MAX_NAMELEN) == FALSE)
         this->m_parent->OnDbgHelpErr("SymGetSearchPath", GetLastError(), 0);
     }
-    char  szUserName[1024] = {0};
+    char szUserName[1024] = {0};
     DWORD dwSize = 1024;
     GetUserNameA(szUserName, &dwSize);
     this->m_parent->OnSymInit(buf, symOptions, szUserName);
@@ -439,7 +431,7 @@ public:
   HANDLE  m_hProcess;
 
 #pragma pack(push, 8)
-  typedef struct _IMAGEHLP_MODULE64_V3
+  struct _IMAGEHLP_MODULE64_V3
   {
     DWORD    SizeOfStruct;         // set to sizeof(IMAGEHLP_MODULE64)
     DWORD64  BaseOfImage;          // base load address of module
@@ -468,7 +460,7 @@ public:
     BOOL Publics;       // contains public symbols
   } IMAGEHLP_MODULE64_V3, *PIMAGEHLP_MODULE64_V3;
 
-  typedef struct _IMAGEHLP_MODULE64_V2
+  struct IMAGEHLP_MODULE64_V2
   {
     DWORD    SizeOfStruct;         // set to sizeof(IMAGEHLP_MODULE64)
     DWORD64  BaseOfImage;          // base load address of module
@@ -480,7 +472,7 @@ public:
     CHAR     ModuleName[32];       // module name
     CHAR     ImageName[256];       // image name
     CHAR     LoadedImageName[256]; // symbol file name
-  } IMAGEHLP_MODULE64_V2, *PIMAGEHLP_MODULE64_V2;
+  };
 #pragma pack(pop)
 
   // SymCleanup()
@@ -855,11 +847,7 @@ private:
             break;
         }
       }
-      LPCSTR pdbName = Module.LoadedImageName;
-      if (Module.LoadedPdbName[0] != 0)
-        pdbName = Module.LoadedPdbName;
-      this->m_parent->OnLoadModule(img, mod, baseAddr, size, result, szSymType, pdbName,
-                                   fileVersion);
+      this->m_parent->OnLoadModule(img, mod, baseAddr, size, result, szSymType, Module.LoadedImageName, fileVersion);
     }
     if (szImg != NULL)
       free(szImg);
@@ -888,8 +876,7 @@ public:
     }
     // First try to use the larger ModuleInfo-Structure
     pModuleInfo->SizeOfStruct = sizeof(IMAGEHLP_MODULE64_V3);
-    void* pData = malloc(
-        4096); // reserve enough memory, so the bug in v6.3.5.1 does not lead to memory-overwrites...
+    void* pData = malloc(4096); // reserve enough memory, so the bug in v6.3.5.1 does not lead to memory-overwrites...
     if (pData == NULL)
     {
       SetLastError(ERROR_NOT_ENOUGH_MEMORY);

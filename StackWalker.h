@@ -11,7 +11,7 @@
  *
  * LICENSE (http://www.opensource.org/licenses/bsd-license.php)
  *
- *   Copyright (c) 2005-2009, Jochen Kalmbach
+ *   Copyright (c) 2005-2010, Jochen Kalmbach
  *   All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without modification,
@@ -138,17 +138,10 @@ public:
 
   BOOL ShowObject(LPVOID pObject);
 
-#if _MSC_VER >= 1300
-  // due to some reasons, the "STACKWALK_MAX_NAMELEN" must be declared as "public"
-  // in older compilers in order to use it... starting with VC7 we can declare it as "protected"
-protected:
-#endif
-  enum
-  {
-    STACKWALK_MAX_NAMELEN = 1024
-  }; // max name length for found symbols
 
 protected:
+    enum { STACKWALK_MAX_NAMELEN = 1024 }; // max name length for found symbols
+
   // Entry for each Callstack-Entry
   struct CallstackEntry
   {
