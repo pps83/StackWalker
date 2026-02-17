@@ -431,7 +431,7 @@ public:
   HANDLE  m_hProcess;
 
 #pragma pack(push, 8)
-  struct _IMAGEHLP_MODULE64_V3
+  struct IMAGEHLP_MODULE64_V3
   {
     DWORD    SizeOfStruct;         // set to sizeof(IMAGEHLP_MODULE64)
     DWORD64  BaseOfImage;          // base load address of module
@@ -458,7 +458,7 @@ public:
     // new elements: 17-Dec-2003
     BOOL SourceIndexed; // pdb supports source server
     BOOL Publics;       // contains public symbols
-  } IMAGEHLP_MODULE64_V3, *PIMAGEHLP_MODULE64_V3;
+  };
 
   struct IMAGEHLP_MODULE64_V2
   {
