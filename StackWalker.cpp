@@ -1038,7 +1038,7 @@ BOOL StackWalker::LoadModules()
     SetLastError(ERROR_DLL_INIT_FAILED);
     return FALSE;
   }
-  if (m_modulesLoaded != FALSE)
+  if (m_modulesLoaded)
     return TRUE;
 
   // Build the sym-path:
@@ -1143,7 +1143,7 @@ BOOL StackWalker::LoadModules()
   }
 
   bRet = this->m_sw->LoadModules(this->m_hProcess, this->m_dwProcessId);
-  if (bRet != FALSE)
+  if (bRet)
     m_modulesLoaded = TRUE;
   return bRet;
 }
