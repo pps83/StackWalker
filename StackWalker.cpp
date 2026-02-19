@@ -260,7 +260,7 @@ public:
     pSymGetModuleInfo64 = NULL;
     pSymGetOptions = NULL;
     pSymGetSymFromAddr64 = NULL;
-    pSymQueryInlineTrace = NULL;
+    pSymInitialize = NULL;
     pSymLoadModule64 = NULL;
     pSymSetOptions = NULL;
     pStackWalk64 = NULL;
@@ -355,7 +355,7 @@ public:
       m_hDbhHelp = LoadLibrary(_T("dbghelp.dll"));
     if (m_hDbhHelp == NULL)
       return FALSE;
-    pSymQueryInlineTrace = (tSI)GetProcAddress(m_hDbhHelp, "SymInitialize");
+    pSymInitialize = (tSI)GetProcAddress(m_hDbhHelp, "SymInitialize");
     pSymCleanup = (tSC)GetProcAddress(m_hDbhHelp, "SymCleanup");
 
     pStackWalk64 = (tSW)GetProcAddress(m_hDbhHelp, "StackWalk64");
@@ -391,7 +391,7 @@ public:
     }
 
     if (pSymCleanup == NULL || pSymFunctionTableAccess64 == NULL || pSymGetModuleBase64 == NULL || pSymGetModuleInfo64 == NULL || pSymGetOptions == NULL ||
-        pSymGetSymFromAddr64 == NULL || pSymQueryInlineTrace == NULL || pSymSetOptions == NULL || pStackWalk64 == NULL || pUnDecorateSymbolName == NULL ||
+        pSymGetSymFromAddr64 == NULL || pSymInitialize == NULL || pSymSetOptions == NULL || pStackWalk64 == NULL || pUnDecorateSymbolName == NULL ||
         pSymLoadModule64 == NULL)
     {
       FreeLibrary(m_hDbhHelp);
@@ -401,7 +401,7 @@ public:
     }
 
     // SymInitialize
-    if (this->pSymQueryInlineTrace(m_hProcess, szSymPath, FALSE) == FALSE)
+    if (this->pSymInitialize(m_hProcess, szSymPath, FALSE) == FALSE)
       this->m_parent->OnDbgHelpErr("SymInitialize", GetLastError(), 0);
 
     DWORD symOptions = this->pSymGetOptions(); // SymGetOptions
@@ -515,7 +515,7 @@ public:
 
   // SymInitialize()
   typedef BOOL(__stdcall* tSI)(IN HANDLE hProcess, IN LPCSTR UserSearchPath, IN BOOL fInvadeProcess);
-  tSI pSymQueryInlineTrace;
+  tSI pSymInitialize;
 
   // SymLoadModule64()
   typedef DWORD64(__stdcall* tSLM)(IN HANDLE hProcess,
