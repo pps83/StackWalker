@@ -131,8 +131,9 @@ static BOOL PreventSetUnhandledExceptionFilter()
 #pragma message("This code works only for x86, x64 and arm64!")
 #endif
 
+
 static TCHAR s_szExceptionLogFileName[_MAX_PATH] = _T("\\exceptions.log"); // default
-static BOOL  s_bUnhandledExeptionFilterSet = FALSE;
+static BOOL s_bUnhandledExeptionFilterSet = FALSE;
 static LONG __stdcall CrashHandlerExceptionFilter(EXCEPTION_POINTERS* pExPtrs)
 {
 #ifdef _M_IX86

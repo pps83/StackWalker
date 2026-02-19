@@ -40,6 +40,7 @@
 #pragma once
 
 #include <windows.h>
+#include <string>
 
 // special defines for VC5/6 (if no actual PSDK is installed):
 #if _MSC_VER < 1300
@@ -64,7 +65,7 @@ public:
 
   enum StackWalkOptions
   {
-    // No addition info will be retrieved
+    // No additional info will be retrieved
     // (only the address is available)
     RetrieveNone = 0,
 

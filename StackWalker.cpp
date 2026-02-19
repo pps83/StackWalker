@@ -235,11 +235,10 @@ static void MyStrCpy(char* szDest, size_t nMaxDestSize, const char* szSrc)
 {
   if (nMaxDestSize <= 0)
     return;
-  strncpy_s(szDest, nMaxDestSize, szSrc, _TRUNCATE);
-  // INFO: _TRUNCATE will ensure that it is null-terminated;
-  // but with older compilers (<1400) it uses "strncpy" and this does not!)
-  szDest[nMaxDestSize - 1] = 0;
-} // MyStrCpy
+  size_t srcLen = std::min(strlen(szSrc), nMaxDestSize - 1);
+  memcpy(szDest, szSrc, srcLen);
+  szDest[srcLen] = 0;
+}
 
 // Normally it should be enough to use 'CONTEXT_FULL' (better would be 'CONTEXT_ALL')
 #define USED_CONTEXT_FLAGS CONTEXT_FULL
