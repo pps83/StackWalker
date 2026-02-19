@@ -816,7 +816,7 @@ private:
       // Retrieve some additional-infos about the module
       IMAGEHLP_MODULE64_V3 Module;
       const char*          szSymType = "-unknown-";
-      if (this->GetModuleInfo(hProcess, baseAddr, &Module) != FALSE)
+      if (this->GetModuleInfo(hProcess, baseAddr, &Module))
       {
         switch (Module.SymType)
         {
@@ -888,7 +888,7 @@ public:
     static bool s_useV3Version = true;
     if (s_useV3Version)
     {
-      if (this->pSymGetModuleInfo64(hProcess, baseAddr, (IMAGEHLP_MODULE64_V3*)pData) != FALSE)
+      if (this->pSymGetModuleInfo64(hProcess, baseAddr, (IMAGEHLP_MODULE64_V3*)pData))
       {
         // only copy as much memory as is reserved...
         memcpy(pModuleInfo, pData, sizeof(IMAGEHLP_MODULE64_V3));
@@ -902,7 +902,7 @@ public:
     // could not retrieve the bigger structure, try with the smaller one (as defined in VC7.1)...
     pModuleInfo->SizeOfStruct = sizeof(IMAGEHLP_MODULE64_V2);
     memcpy(pData, pModuleInfo, sizeof(IMAGEHLP_MODULE64_V2));
-    if (this->pSymGetModuleInfo64(hProcess, baseAddr, (IMAGEHLP_MODULE64_V3*)pData) != FALSE)
+    if (this->pSymGetModuleInfo64(hProcess, baseAddr, (IMAGEHLP_MODULE64_V3*)pData))
     {
       // only copy as much memory as is reserved...
       memcpy(pModuleInfo, pData, sizeof(IMAGEHLP_MODULE64_V2));
@@ -1305,7 +1305,7 @@ BOOL StackWalker::ShowCallstack(HANDLE                    hThread,
       // we seem to have a valid PC
 
       // show module info (SymGetModuleInfo64())
-      if (this->m_sw->GetModuleInfo(this->m_hProcess, csEntry.offset, &Module) != FALSE)
+      if (this->m_sw->GetModuleInfo(this->m_hProcess, csEntry.offset, &Module))
       { // got module info OK
         switch (Module.SymType)
         {
@@ -1361,13 +1361,13 @@ BOOL StackWalker::ShowCallstack(HANDLE                    hThread,
           DWORD inlineContext, frameIndex;
           // SymQueryInlineTrace()
           if (this->m_sw->pSymQueryInlineTrace(this->m_hProcess, csEntry.offset, 0, csEntry.offset, csEntry.offset,
-                                &inlineContext, &frameIndex) != FALSE)
+                                &inlineContext, &frameIndex))
           {
             for (DWORD fi = 0; fi < inlineFrames; fi++)
             {
               // SymFromInlineContext()
               if (this->m_sw->pSymFromInlineContext(this->m_hProcess, csEntry.offset, inlineContext,
-                                    &(csEntry.offsetFromSymbol), pSymInfo) != FALSE)
+                                    &(csEntry.offsetFromSymbol), pSymInfo))
               {
                 MyStrCpy(csEntry.name, STACKWALK_MAX_NAMELEN, pSymInfo->Name);
                 // UnDecorateSymbolName()
@@ -1383,7 +1383,7 @@ BOOL StackWalker::ShowCallstack(HANDLE                    hThread,
 
               // SymGetLineFromInlineContext()
               if (this->m_sw->pSymGetLineFromInlineContext(this->m_hProcess, csEntry.offset, inlineContext, 0,
-                                      &(csEntry.offsetFromLine), &Line) != FALSE)
+                                      &(csEntry.offsetFromLine), &Line))
               {
                 csEntry.lineNumber = Line.LineNumber;
                 MyStrCpy(csEntry.lineFileName, STACKWALK_MAX_NAMELEN, Line.FileName);
@@ -1410,7 +1410,7 @@ BOOL StackWalker::ShowCallstack(HANDLE                    hThread,
 
       // show procedure info (SymGetSymFromAddr64())
       if (this->m_sw->pSymGetSymFromAddr64(this->m_hProcess, csEntry.offset, &(csEntry.offsetFromSymbol),
-                             pSym) != FALSE)
+                             pSym))
       {
         MyStrCpy(csEntry.name, STACKWALK_MAX_NAMELEN, pSym->Name);
         // UnDecorateSymbolName()
@@ -1426,7 +1426,7 @@ BOOL StackWalker::ShowCallstack(HANDLE                    hThread,
       if (this->m_sw->pSymGetLineFromAddr64 != NULL)
       { // yes, we have SymGetLineFromAddr64()
         if (this->m_sw->pSymGetLineFromAddr64(this->m_hProcess, csEntry.offset, &(csEntry.offsetFromLine),
-                               &Line) != FALSE)
+                               &Line))
         {
           csEntry.lineNumber = Line.LineNumber;
           MyStrCpy(csEntry.lineFileName, STACKWALK_MAX_NAMELEN, Line.FileName);
@@ -1621,7 +1621,7 @@ void StackWalker::OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUser
   OSVERSIONINFOA ver;
   ZeroMemory(&ver, sizeof(OSVERSIONINFOA));
   ver.dwOSVersionInfoSize = sizeof(ver);
-  if (GetVersionExA(&ver) != FALSE)
+  if (GetVersionExA(&ver))
   {
     snprintf(buffer, STACKWALK_MAX_NAMELEN, "OS-Version: %d.%d.%d (%s)\n", ver.dwMajorVersion,
                 ver.dwMinorVersion, ver.dwBuildNumber, ver.szCSDVersion);
@@ -1636,7 +1636,7 @@ void StackWalker::OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUser
 #pragma warning(push)
 #pragma warning(disable : 4996)
 #endif
-  if (GetVersionExA((OSVERSIONINFOA*)&ver) != FALSE)
+  if (GetVersionExA((OSVERSIONINFOA*)&ver))
   {
     snprintf(buffer, STACKWALK_MAX_NAMELEN, "OS-Version: %d.%d.%d (%s) 0x%x-0x%x\n", ver.dwMajorVersion,
                 ver.dwMinorVersion, ver.dwBuildNumber, ver.szCSDVersion, ver.wSuiteMask,
