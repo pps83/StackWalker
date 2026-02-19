@@ -143,24 +143,6 @@ public:
 protected:
     enum { STACKWALK_MAX_NAMELEN = 1024 }; // max name length for found symbols
 
-  // Entry for each Callstack-Entry
-  struct CallstackEntry
-  {
-    DWORD64 offset; // if 0, we have no valid entry
-    CHAR    name[STACKWALK_MAX_NAMELEN];
-    CHAR    undName[STACKWALK_MAX_NAMELEN];
-    CHAR    undFullName[STACKWALK_MAX_NAMELEN];
-    DWORD64 offsetFromSymbol;
-    DWORD   offsetFromLine;
-    DWORD   lineNumber;
-    CHAR    lineFileName[STACKWALK_MAX_NAMELEN];
-    DWORD   symType;
-    LPCSTR  symTypeString;
-    CHAR    moduleName[STACKWALK_MAX_NAMELEN];
-    DWORD64 baseOfImage;
-    CHAR    loadedImageName[STACKWALK_MAX_NAMELEN];
-  };
-
   void ClearCSEntry(CallstackEntry& csEntry);
   void ClearCSEntryInline(CallstackEntry& csEntry);
 

@@ -99,6 +99,24 @@
 
 static BOOL __stdcall myReadProcMem(HANDLE hProcess, DWORD64 qwBaseAddress, PVOID lpBuffer, DWORD nSize, LPDWORD lpNumberOfBytesRead);
 
+  // Entry for each Callstack-Entry
+  struct CallstackEntry
+  {
+    DWORD64 offset; // if 0, we have no valid entry
+    CHAR    name[STACKWALK_MAX_NAMELEN];
+    CHAR    undName[STACKWALK_MAX_NAMELEN];
+    CHAR    undFullName[STACKWALK_MAX_NAMELEN];
+    DWORD64 offsetFromSymbol;
+    DWORD   offsetFromLine;
+    DWORD   lineNumber;
+    CHAR    lineFileName[STACKWALK_MAX_NAMELEN];
+    DWORD   symType;
+    LPCSTR  symTypeString;
+    CHAR    moduleName[STACKWALK_MAX_NAMELEN];
+    DWORD64 baseOfImage;
+    CHAR    loadedImageName[STACKWALK_MAX_NAMELEN];
+  };
+
 // If VC7 and later, then use the shipped 'dbghelp.h'-file
 #pragma pack(push, 8)
 #if _MSC_VER >= 1300
