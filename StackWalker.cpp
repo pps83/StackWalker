@@ -83,7 +83,6 @@
  **********************************************************************/
 
 #include "StackWalker.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <tchar.h>
@@ -97,6 +96,8 @@
 #pragma warning(disable : 4091)   // For fix unnamed enums from DbgHelp.h
 #endif
 
+
+static BOOL __stdcall myReadProcMem(HANDLE hProcess, DWORD64 qwBaseAddress, PVOID lpBuffer, DWORD nSize, LPDWORD lpNumberOfBytesRead);
 
 // If VC7 and later, then use the shipped 'dbghelp.h'-file
 #pragma pack(push, 8)
@@ -1523,11 +1524,11 @@ void StackWalker::ClearCSEntry(CallstackEntry& csEntry)
     csEntry.baseOfImage = 0;
 }
 
-BOOL __stdcall StackWalker::myReadProcMem(HANDLE  hProcess,
-                                          DWORD64 qwBaseAddress,
-                                          PVOID   lpBuffer,
-                                          DWORD   nSize,
-                                          LPDWORD lpNumberOfBytesRead)
+static BOOL __stdcall myReadProcMem(HANDLE  hProcess,
+                                    DWORD64 qwBaseAddress,
+                                    PVOID   lpBuffer,
+                                    DWORD   nSize,
+                                    LPDWORD lpNumberOfBytesRead)
 {
   if (s_readMemoryFunction == NULL)
   {

@@ -193,12 +193,6 @@ protected:
   int m_options;
   int m_MaxRecursionCount;
 
-  static BOOL __stdcall myReadProcMem(HANDLE  hProcess,
-                                      DWORD64 qwBaseAddress,
-                                      PVOID   lpBuffer,
-                                      DWORD   nSize,
-                                      LPDWORD lpNumberOfBytesRead);
-
   friend StackWalkerInternal;
 };
 
